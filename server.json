@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.novigapi/novigapi",
+  "title": "Novig market data (novigapi.com)",
+  "description": "Read-only Novig market data: order books, trades, line history, fair prices, +EV and devig.",
+  "version": "0.1.0",
+  "websiteUrl": "https://novigapi.com",
+  "repository": { "url": "https://github.com/novigapi/novigapi-mcp", "source": "github" },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "novigapi-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "NOVIGAPI_KEY", "description": "Your nv_... key from https://novigapi.com/sign-up. Optional: search, fetch and devig work without it.", "isRequired": false, "isSecret": true, "format": "string" }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://novigapi.com/api/mcp",
+      "headers": [
+        { "name": "Authorization", "description": "Bearer nv_... (optional for search, fetch and devig)", "isRequired": false, "isSecret": true }
+      ]
+    }
+  ]
+}
