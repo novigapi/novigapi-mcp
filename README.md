@@ -1,5 +1,7 @@
 # novigapi-mcp
 
+[![npm](https://img.shields.io/npm/v/novigapi-mcp.svg)](https://www.npmjs.com/package/novigapi-mcp)
+
 A stdio MCP server for [novigapi.com](https://novigapi.com), a read-only Novig market data API. It gives Claude Desktop, Claude Code, Cursor, Windsurf and any other MCP client live Novig data: open markets with both sides of the book, player props, intraday line history, fair (no-vig) prices, closing-line value, line moves, +EV and arbitrage against FanDuel and DraftKings, and a devig tool.
 
 It is a thin bridge: each JSON-RPC message from your client goes to the public endpoint `https://novigapi.com/api/mcp` and the reply comes back unchanged. No dependencies, Node 18 or newer. If your client supports remote servers, you can also point it straight at that URL.
@@ -7,6 +9,16 @@ It is a thin bridge: each JSON-RPC message from your client goes to the public e
 Novig has an official trading API and free daily CSVs. novigapi.com is the read-only data layer on top: no Novig account, names resolved, intraday line history, fair prices and alerts. To place orders, use Novig's official API at [docs.novig.com](https://docs.novig.com).
 
 Independent. Not affiliated with, endorsed by or sponsored by Novig.
+
+## Install
+
+Nothing to install ahead of time: MCP clients start it with npx, which fetches the package from [npm](https://www.npmjs.com/package/novigapi-mcp).
+
+```bash
+npx -y novigapi-mcp
+```
+
+Put your key in `NOVIGAPI_KEY` (optional for the free tools below). For a TypeScript client instead of MCP, `npm install novigapi`.
 
 ## No key needed to start
 
