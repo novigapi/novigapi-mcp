@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "novigapi": {
+      "url": "https://novigapi.com/api/mcp"
+    }
+  }
+}
