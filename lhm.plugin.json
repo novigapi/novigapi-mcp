@@ -1,0 +1,1284 @@
+{
+  "author": "Stunning Couches LLC",
+  "description": "Stdio MCP server for novigapi.com: Novig markets, order books, line history, fair prices and devig for Claude, Cursor and other MCP clients. Search, fetch and devig work with no key. Independent; not affiliated with Novig.",
+  "homepage": "https://novigapi.com/use-with-claude",
+  "identifier": "novigapi-novigapi-mcp",
+  "name": "Novig API",
+  "prompts": [],
+  "resources": [],
+  "tags": [
+    "mcp",
+    "model-context-protocol",
+    "novig",
+    "odds",
+    "sports-betting",
+    "prediction-market",
+    "devig",
+    "claude"
+  ],
+  "tools": [
+    {
+      "name": "list_watchlists",
+      "description": "List Watchlists. A saved set of players, teams or markets you want line-move alerts on.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "number"
+          },
+          "offset": {
+            "type": "number"
+          },
+          "user_request": {
+            "type": "string",
+            "description": "The current user task in one sentence. Saved so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ]
+      }
+    },
+    {
+      "name": "get_watchlists",
+      "description": "Read one of your Watchlists by id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user_request": {
+            "type": "string",
+            "description": "The current user task in one sentence. Saved so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "id",
+          "user_request"
+        ]
+      }
+    },
+    {
+      "name": "create_watchlists",
+      "description": "Create one of your Watchlists.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "What this watchlist tracks"
+          },
+          "league": {
+            "type": "string",
+            "description": "League code such as NFL or NBA"
+          },
+          "targets": {
+            "type": "string",
+            "description": "Player names"
+          },
+          "move_threshold": {
+            "type": "number",
+            "description": "Minimum price move in percentage points before an alert fires"
+          },
+          "user_request": {
+            "type": "string",
+            "description": "The current user task in one sentence. Saved so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "name",
+          "targets",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "update_watchlists",
+      "description": "Change fields on one of your Watchlists.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "What this watchlist tracks"
+          },
+          "league": {
+            "type": "string",
+            "description": "League code such as NFL or NBA"
+          },
+          "targets": {
+            "type": "string",
+            "description": "Player names"
+          },
+          "move_threshold": {
+            "type": "number",
+            "description": "Minimum price move in percentage points before an alert fires"
+          },
+          "id": {
+            "type": "string"
+          },
+          "user_request": {
+            "type": "string",
+            "description": "The current user task in one sentence. Saved so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "id",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "delete_watchlists",
+      "description": "Delete one of your Watchlists. Cannot be undone, so confirm with your user first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "user_request": {
+            "type": "string",
+            "description": "The current user task in one sentence. Saved so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "id",
+          "user_request"
+        ]
+      }
+    },
+    {
+      "name": "send_feedback",
+      "description": "Tell the team what is missing or wrong. The team reads every one. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "missing_feature",
+              "missing_data",
+              "bug",
+              "other"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "contact": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "message"
+        ]
+      }
+    },
+    {
+      "name": "get_onboarding_questions",
+      "description": "The questions that finish setting up your user's account, with their ids and options. With a key, also the answers already given. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "answer_onboarding",
+      "description": "Answer the onboarding questions for your user, from what you know about their project. Ask them what you do not know; never guess. Answering again replaces the answers; the same answers twice change nothing. Your user sees them on their dashboard, marked as answered by their agent. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "type": "object",
+            "description": "Question id to answer. A select question takes one of its options.",
+            "properties": {
+              "data_wanted": {
+                "type": "string",
+                "description": "What Novig data are you looking for?"
+              },
+              "use_case": {
+                "type": "string",
+                "description": "What do you want to do with it?"
+              },
+              "found_us": {
+                "type": "string",
+                "description": "How did you find us?"
+              },
+              "notes": {
+                "type": "string",
+                "description": "Anything else we should know?"
+              }
+            },
+            "required": [
+              "data_wanted",
+              "use_case"
+            ]
+          },
+          "client": {
+            "type": "string",
+            "description": "Your name, such as Claude Code or Cursor."
+          }
+        },
+        "required": [
+          "answers"
+        ]
+      }
+    },
+    {
+      "name": "cancel_subscription",
+      "description": "Cancel your user's paid plan at the end of the current billing period. Only call this when your user asked to cancel. A reason is required: ask your user why they are cancelling and pass their answer; never pick a reason for them. Reasons: got_what_i_needed (I got the data I needed), too_expensive (Too expensive), missing_data (Missing data or features I need), reliability (Errors or slow responses), not_using (Not using it enough), switched (Switched to another service), other (Something else). \"other\" needs a comment. keep_subscription undoes it. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "got_what_i_needed",
+              "too_expensive",
+              "missing_data",
+              "reliability",
+              "not_using",
+              "switched",
+              "other"
+            ],
+            "description": "Why your user is cancelling, in their words mapped to one id. Ask them; never guess."
+          },
+          "comment": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Your user's own words about why. Required when reason is other."
+          },
+          "client": {
+            "type": "string",
+            "description": "Your name, such as Claude Code or Cursor."
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      }
+    },
+    {
+      "name": "keep_subscription",
+      "description": "Undo a scheduled cancellation, so your user's plan renews as normal. Only when your user asks. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_subscription",
+      "description": "Your user's plan and subscription status, including a scheduled cancellation, and the reasons cancel_subscription accepts. Costs no quota.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_markets",
+      "description": "List Novig markets with best bid, implied ask, last price, volume and open interest, filtered by league, event, market type, player, team or status. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/markets. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA or NFL."
+          },
+          "event_id": {
+            "type": "string",
+            "description": "Novig event id."
+          },
+          "market_type": {
+            "type": "string",
+            "description": "Market type code."
+          },
+          "player": {
+            "type": "string",
+            "description": "Player slug, such as lebron-james."
+          },
+          "team": {
+            "type": "string",
+            "description": "Team slug."
+          },
+          "status": {
+            "type": "string",
+            "description": "open, closed, settled, suspended or all.",
+            "enum": [
+              "open",
+              "closed",
+              "settled",
+              "suspended",
+              "all"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_market",
+      "description": "One Novig market by id, with its outcomes and current prices. Costs 1 credit. Same data as GET /api/v1/markets/{id}. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "market_id",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_orderbook",
+      "description": "The full resting order book for one market: every price level and quantity on both sides. Costs 1 credit. Same data as GET /api/v1/orderbook/{id}. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "market_id",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_trades",
+      "description": "Fills on Novig, newest first, optionally for one market and since a time. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/trades. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_line_history",
+      "description": "Intraday price history (every recorded change of best bid, last price, volume) for one market or outcome. Costs 5 credits per 100 rows requested. Same data as GET /api/v1/line-history. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "outcome_id": {
+            "type": "string",
+            "description": "Novig outcome id."
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "until": {
+            "type": "string",
+            "description": "ISO 8601 time."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "fair_price",
+      "description": "The fair no-vig price of one market: the two-sided mid, with the formula and the taker fee coefficient, plus meta.devig with the fair price by every devig method (multiplicative, additive, power, Shin) applied to the market's implied asks. Costs 1 credit. Same data as GET /api/v1/fair-price. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "method": {
+            "type": "string",
+            "description": "Devig method to mark as selected in meta.devig. Default additive, which equals the two-sided mid.",
+            "enum": [
+              "multiplicative",
+              "additive",
+              "power",
+              "shin"
+            ]
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "market_id",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_player_props",
+      "description": "Current Novig player prop markets for one player, with fair prices. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/player-props. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA."
+          },
+          "player": {
+            "type": "string",
+            "description": "Player slug, such as lebron-james."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "league",
+          "player",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_line_moves",
+      "description": "Recorded line moves and steam moves, newest first, by league and minimum size in percentage points. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/line-moves. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code."
+          },
+          "market_id": {
+            "type": "string",
+            "description": "Only this Novig market."
+          },
+          "kind": {
+            "type": "string",
+            "description": "move or steam.",
+            "enum": [
+              "move",
+              "steam"
+            ]
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "min_delta_pp": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Smallest move to return, in percentage points."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_events",
+      "description": "Novig events (games) with teams, start time and status, filtered by league and status. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/events. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA or NFL."
+          },
+          "status": {
+            "type": "string",
+            "description": "open, closed, settled, suspended or all.",
+            "enum": [
+              "open",
+              "closed",
+              "settled",
+              "suspended",
+              "all"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_ohlc_daily",
+      "description": "Daily open, high, low and close with volume and open interest, for one market or for every market on one date. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/ohlc/daily. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD. Free reads only the last 7 days."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_players",
+      "description": "Players with Novig markets, by league or name search. Returns the slugs other tools take. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/players. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA."
+          },
+          "q": {
+            "type": "string",
+            "description": "Part of a player name."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_teams",
+      "description": "Teams with Novig markets, by league. Returns the slugs other tools take. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/teams. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_leagues",
+      "description": "Leagues Novig lists markets for, with their codes. Costs 1 credit per 100 rows requested. Same data as GET /api/v1/leagues. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_clv",
+      "description": "Closing-line value: each outcome's opening and closing fair price before the start, the move between them and the result once graded, for one market, a player, a league or a date. Kept for every market recorded two-sided before its start. Costs 5 credits per 100 rows requested. Same data as GET /api/v1/clv. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "player": {
+            "type": "string",
+            "description": "Player slug, such as lebron-james."
+          },
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA."
+          },
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD: markets starting that day (US Eastern)."
+          },
+          "settled": {
+            "type": "boolean",
+            "description": "Only markets with a grade."
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "until": {
+            "type": "string",
+            "description": "ISO 8601 time: markets starting at or before it."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_ev_bets",
+      "description": "Positive expected value bets: FanDuel and DraftKings prices that pay more than the Novig fair (no-vig) probability, with EV%, edge in cents, Kelly stake, freshness and a confidence flag. Default view: fair probability at least 15%, main lines only, high confidence only, best EV first; override with min_prob, alt_lines, confidence and sort. Free keys read the top rows 10 minutes late; live rows need Developer. Costs 2 credits per 100 rows requested. Same data as GET /api/v1/ev. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code, such as NBA or NFL."
+          },
+          "min_prob": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 95,
+            "description": "Smallest Novig fair probability, percent. Default 15."
+          },
+          "alt_lines": {
+            "type": "boolean",
+            "description": "Include alternate lines, not only the main line of each market. Default false."
+          },
+          "confidence": {
+            "type": "string",
+            "description": "high (default) or any.",
+            "enum": [
+              "high",
+              "any"
+            ]
+          },
+          "sort": {
+            "type": "string",
+            "description": "ev (default), edge_cents or kelly.",
+            "enum": [
+              "ev",
+              "edge_cents",
+              "kelly"
+            ]
+          },
+          "market_type": {
+            "type": "string",
+            "description": "moneyline, spread, total or player_prop.",
+            "enum": [
+              "moneyline",
+              "spread",
+              "total",
+              "player_prop"
+            ]
+          },
+          "min_edge": {
+            "type": "number",
+            "minimum": -3,
+            "maximum": 100,
+            "description": "Smallest EV% to return, default 0."
+          },
+          "books": {
+            "type": "string",
+            "description": "Comma list of book codes: fd (FanDuel), dk (DraftKings)."
+          },
+          "player": {
+            "type": "string",
+            "description": "Player slug, such as lebron-james."
+          },
+          "market_id": {
+            "type": "string",
+            "description": "Only this Novig market."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "find_arbitrage",
+      "description": "Two-way arbitrage across Novig, FanDuel and DraftKings (both legs, the stake split for 100 units and the guaranteed margin), or middles where lines differ (type=middles). Production and Scale. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/arbitrage. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "arbitrage (default) or middles.",
+            "enum": [
+              "arbitrage",
+              "middles"
+            ]
+          },
+          "league": {
+            "type": "string",
+            "description": "League code."
+          },
+          "market_type": {
+            "type": "string",
+            "description": "moneyline, spread, total or player_prop.",
+            "enum": [
+              "moneyline",
+              "spread",
+              "total",
+              "player_prop"
+            ]
+          },
+          "min_profit": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Smallest guaranteed margin, percent."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Rows per page, default 50. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "compare_market",
+      "description": "One Novig market beside FanDuel and DraftKings on exactly the same line: Novig bid, ask and fair price, each book's American and decimal odds, implied probability, age and EV%. Costs 1 credit. Same data as GET /api/v1/compare/{market_id}. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "market_id": {
+            "type": "string",
+            "description": "Novig market id."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "market_id",
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_results",
+      "description": "Settled markets with the winning outcome and closing price: each row says how it was graded (box score, final price or Novig's file) and how sure the grade is. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/results. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "league": {
+            "type": "string",
+            "description": "League code."
+          },
+          "market_id": {
+            "type": "string",
+            "description": "Only this Novig market."
+          },
+          "graded": {
+            "type": "boolean",
+            "description": "Only rows with a decided grade: a winner, a void or a push."
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_market_summary",
+      "description": "Daily market summary from Novig's daily files: straight markets by league and market type (markets, contracts traded, open interest) and parlays (COMBO) per day with taker trades, notional and the legs histogram. Costs 3 credits per 100 rows requested. Same data as GET /api/v1/market-summary/daily. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD. Free reads only the last 7 days."
+          },
+          "since": {
+            "type": "string",
+            "description": "ISO 8601 time. Free reads only the last 7 days."
+          },
+          "league": {
+            "type": "string",
+            "description": "League code, or ALL for the day totals and parlays."
+          },
+          "market_type": {
+            "type": "string",
+            "description": "Market type, such as POINTS, or COMBO for parlays."
+          },
+          "kind": {
+            "type": "string",
+            "description": "straight, total or combo.",
+            "enum": [
+              "straight",
+              "total",
+              "combo"
+            ]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Rows per page, default 100. Free returns at most 100."
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "user_request"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "devig",
+      "description": "Remove the vig from a set of odds and return fair probabilities and fair odds, by the multiplicative, additive, power or Shin method. Needs no key and costs no credits. For a live Novig market's fair price, use fair_price. Pass user_request: your user's current task in one sentence (3 to 500 characters, no secrets or personal data). It is saved so the team builds what people need.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "outcomes": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 20,
+            "description": "Each outcome as american (-110), decimal (1.91) or probability (0.52).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "american": {
+                  "type": "number"
+                },
+                "decimal": {
+                  "type": "number"
+                },
+                "probability": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "multiplicative",
+              "additive",
+              "power",
+              "shin"
+            ]
+          },
+          "user_request": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 500,
+            "description": "Your user's current task in one sentence. Saved for 35 days so the team can decide what to build. Leave out secrets and personal data."
+          }
+        },
+        "required": [
+          "outcomes"
+        ]
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search Novig players and their per-stat prop pages (such as \"LeBron James points\"), current markets, teams, leagues, and this site's calculators, guides, glossary and API docs. Returns ids to pass to fetch. Needs no key and costs no credits.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "A player (optionally with a stat), team, league, market, calculator, guide or docs topic."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "fetch",
+      "description": "Read one search result by id: current Novig markets with prices and fair prices, or a page of this site, as text with a citation URL. Needs no key and costs no credits.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "An id from search."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    {
+      "name": "start_signup",
+      "description": "Create a Novig API account for your user and get a key without a password. Returns approval_url: show it to your user, who approves in one click (free, no card). Then call finish_signup every 5 seconds with device_code. Costs nothing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "data_wanted": {
+            "type": "string",
+            "description": "What Novig data your user wants (3-1000 characters, required)"
+          },
+          "use_case": {
+            "type": "string",
+            "description": "What they will do with it (3-1000, required)"
+          },
+          "found_us": {
+            "type": "string",
+            "description": "How they found us (optional, up to 300)"
+          },
+          "agent_found_us": {
+            "type": "string",
+            "description": "How you, the agent, found us (optional, up to 300)"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "notes": {
+                "type": "string"
+              }
+            }
+          },
+          "agent": {
+            "type": "string",
+            "description": "Your name, such as Claude Code (optional)"
+          }
+        },
+        "required": [
+          "data_wanted",
+          "use_case"
+        ]
+      }
+    },
+    {
+      "name": "finish_signup",
+      "description": "Collect the API key after your user approved at approval_url. Poll every 5 seconds with device_code. Pending returns AUTHORIZATION_PENDING; the key is returned once. Costs nothing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "device_code": {
+            "type": "string",
+            "description": "nvd_... from start_signup"
+          }
+        },
+        "required": [
+          "device_code"
+        ]
+      }
+    },
+    {
+      "name": "rate_result",
+      "description": "Rate how well the last result served your user's task, 1 to 5, with an optional message. The team reads every one. Costs nothing and works while rate limited. Leave out secrets and personal data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "message": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "missing_data",
+              "missing_feature",
+              "wrong_data",
+              "bug",
+              "docs",
+              "praise",
+              "other"
+            ]
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "use_case": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "agent": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "version": "0.1.0"
+}
