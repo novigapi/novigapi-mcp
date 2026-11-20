@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "novig": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "novigapi-mcp"
+      ],
+      "env": {
+        "NOVIGAPI_KEY": "${NOVIGAPI_KEY}"
+      }
+    }
+  }
+}
