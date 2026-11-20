@@ -95,3 +95,9 @@ Credits per call are in each tool's description and at [novigapi.com/pricing](ht
 `npm test` runs against a local stand-in server: no network, no key.
 
 MIT licensed. Operated by Stunning Couches LLC.
+
+## Gemini CLI
+
+```sh
+gemini extensions install https://github.com/novigapi/novigapi-mcp
+```

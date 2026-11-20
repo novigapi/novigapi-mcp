@@ -1,0 +1,25 @@
+{
+  "name": "novigapi-mcp",
+  "version": "0.1.0",
+  "description": "Read-only Novig exchange data for Gemini CLI from novigapi.com: both sides of the book, intraday line history, no-vig fair prices and line-move alerts, with names resolved.",
+  "mcpServers": {
+    "novig": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "novigapi-mcp"
+      ],
+      "env": {
+        "NOVIGAPI_KEY": "$NOVIGAPI_KEY"
+      }
+    }
+  },
+  "settings": [
+    {
+      "name": "API key",
+      "description": "Novig API key (free at https://novigapi.com). Optional for the free tools.",
+      "envVar": "NOVIGAPI_KEY",
+      "sensitive": true
+    }
+  ]
+}
